@@ -347,6 +347,14 @@ class SlackApp extends SpotifyBaton {
 
         $blocks = [$this->block_header("Remote control", "satellite_antenna")];
 
+        if (!$this->is_operator()) {
+
+            $blocks[] = $this->block_mrkdwn("You need to be operator for this command! :neutral_face:");
+
+            return $blocks;
+
+        }
+
         $blocks[] = [
             "type" => "actions",
             "elements" => [
