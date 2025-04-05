@@ -507,8 +507,8 @@ class SlackApp extends SpotifyBaton {
             if (!empty($blocks = $this->{"command_{$command}"}())) {
 
                 $this->slack_post("chat.postEphemeral", [
-                    "channel" => $_REQUEST['channel_id'],
-                    "user" => $_REQUEST['user_id'],
+                    "channel" => $this->request["channel_id"],
+                    "user" => $this->request["user_id"],
                     "blocks" => $blocks
                 ]);
 
