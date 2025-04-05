@@ -450,6 +450,44 @@ class SlackApp extends SpotifyBaton {
 
     }
 
+    private function slack_find_user(string $username): string {
+
+        if (empty($this->session["userslist"]["created"]) || $this->session["userslist"]["created"] < strtotime("-10 minutes")) {
+
+            $users = $this->slack_post("users.list", []);
+
+            if (!empty($users["members"])) {
+
+                $this->session["userslist"]["users"] = [];
+
+                foreach ($users["members"] as $user) {
+
+                    $this->session["userslist"]["users"][$user["id"]] = $user["name"];
+
+                }
+
+            }
+
+        }
+
+        if (!empty($this->session["userslist"]["users"])) {
+
+            foreach ($this->session["userslist"]["users"] as $id => $name) {
+
+                if ($name === $username) {
+
+                    return $id;
+
+                }
+
+            }
+
+        }
+
+        return "";
+
+    }
+
     private function slack_response(string $url, array $content): array {
 
         curl_reset($this->curl);
