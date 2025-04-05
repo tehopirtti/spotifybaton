@@ -32,6 +32,74 @@ class SlackApp extends SpotifyBaton {
 
     }
 
+    private function command_operator(): array {
+
+        $blocks = [$this->block_header("Manage operators", "identification_card")];
+
+        if (preg_match("/^(.+?) @(.+)$/", $this->request["text"], $command)) {
+
+            if (!empty($user = $this->slack_find_user($command[2]))) {
+
+                if (empty($this->session["operators"])) {
+
+                    $this->session["operators"] = [];
+
+                }
+
+                switch ($command[1]) {
+
+                    case "add":
+
+                        if (in_array($user, $this->session["operators"])) {
+
+                            $blocks[] = $this->block_mrkdwn("<@{$user}> already operator! :face_with_monocle:");
+
+                        } else {
+
+                            $this->session["operators"][] = $user;
+
+                            $blocks[] = $this->block_mrkdwn("<@{$user}> promoted to operator :saluting_face:");
+
+                        }
+
+                        break;
+
+                    case "del":
+
+                        if (($index = array_search($user, $this->session["operators"])) !== false) {
+
+                            unset($this->session["operators"][$index]);
+
+                            $blocks[] = $this->block_mrkdwn("<@{$user}> removed from operators :saluting_face:");
+
+                        } else {
+
+                            $blocks[] = $this->block_mrkdwn("<@{$user}> is not an operator! :face_with_monocle:");
+
+                        }
+
+                        break;
+
+                    default:
+
+                        $blocks[] = $this->block_mrkdwn("You want me to do what with <@{$user}> :face_with_raised_eyebrow:");
+
+                        break;
+
+                }
+
+            } else {
+
+                $blocks[] = $this->block_mrkdwn("User not found :face_with_monocle:");
+
+            }
+
+        }
+
+        return $blocks;
+
+    }
+
     private function command_voteskip(): array {
 
         $item = $this->player_current();
