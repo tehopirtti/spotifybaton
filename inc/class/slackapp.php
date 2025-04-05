@@ -36,6 +36,14 @@ class SlackApp extends SpotifyBaton {
 
         $blocks = [$this->block_header("Manage operators", "identification_card")];
 
+        if (!$this->is_operator()) {
+
+            $blocks[] = $this->block_mrkdwn("You need to be operator for this command! :neutral_face:");
+
+            return $blocks;
+
+        }
+
         if (preg_match("/^(.+?) @(.+)$/", $this->request["text"], $command)) {
 
             if (!empty($user = $this->slack_find_user($command[2]))) {
