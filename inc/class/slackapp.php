@@ -518,6 +518,36 @@ class SlackApp extends SpotifyBaton {
 
     }
 
+    private function is_operator(): bool {
+
+        if (empty($this->request["user_id"])) {
+
+            // Something fishy going on, deny everything!
+            return false;
+
+        }
+
+        if (empty($this->session["operators"])) {
+
+            // There are no operators, so everyone is!
+            return true;
+
+        }
+
+        foreach ($this->session["operators"] as $operator) {
+
+            if ($operator === $this->request["user_id"]) {
+
+                return true;
+
+            }
+
+        }
+
+        return false;
+
+    }
+
     private function slack_find_user(string $username): string {
 
         if (empty($this->session["userslist"]["created"]) || $this->session["userslist"]["created"] < strtotime("-10 minutes")) {
