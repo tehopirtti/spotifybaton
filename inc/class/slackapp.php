@@ -243,8 +243,6 @@ class SlackApp extends SpotifyBaton {
         // Song changed before start
         if ($this->action['value'] != $this->player_current()["track"]["uri"]) {
 
-            $this->debug("song changed before start");
-
             $this->slack_response($this->payload['response_url'], [
                 "blocks" => [
                     $this->block_track($this->track($this->action['value'])),
