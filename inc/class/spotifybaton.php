@@ -500,7 +500,7 @@ class SpotifyBaton {
 
         $artists = [];
 
-        foreach ($data["artists"] as $artist) {
+        foreach ($item["artists"] as $artist) {
 
             $artists[] = [
                 "uri" => $artist["uri"],
