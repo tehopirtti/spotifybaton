@@ -206,6 +206,14 @@ class SlackApp extends SpotifyBaton {
 
         $blocks = [$this->block_header("Vote skip", "mega")];
 
+        if (!$this->in_channel($this->request["channel_id"])) {
+
+            $blocks[] = $this->block_mrkdwn("I'm not here :face_with_monocle:");
+
+            return $blocks;
+
+        }
+
         if (empty($item)) {
 
             $blocks[] = $this->block_mrkdwn("There are no playback going on for this action :face_with_monocle:");
