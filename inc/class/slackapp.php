@@ -44,7 +44,7 @@ class SlackApp extends SpotifyBaton {
 
         }
 
-        if (preg_match("/^(.+?) #(.+)$/", $this->request["text"], $command)) {
+        if (preg_match("/^(.+?) <?#(.+?)(?:\|>)?$/", $this->request["text"], $command)) {
 
             if (!empty($channel = $this->slack_find_channel($command[2]))) {
 
@@ -722,10 +722,9 @@ class SlackApp extends SpotifyBaton {
 
     private function slack_find_channel(string $channelname): string {
 
-        if (empty($this->session["conversationslist"]["created"]) || $this->session["conversationslist"]["created"] < strtotime("-10 minutes")) {
+        if (empty($this->session["conversationslist"]["created"]) || $this->session["conversationslist"]["created"] < strtotime("-10 seconds")) {
 
             $channels = $this->slack_post("conversations.list", [
-                "types" => "public_channel,private_channel",
                 "limit" => 1000
             ]);
 
