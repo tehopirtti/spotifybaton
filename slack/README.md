@@ -13,7 +13,7 @@ Channels are not mandatory and their main purpose is only to enable usage restri
 
 Adding and removing SpotifyBaton will be notified to user by private message and application will join or leave that channel.
 ## Operators
-Also operators are optional - without any, all commands are available for everybody (which is probably unwanted situation). First announced operator can be kinda thought of initialization. 
+Also operators are optional - without any, all commands are available for everybody (which is probably unwanted situation). First announced operator can be kinda thought of initialization.
 ```
 /operator add|del @user
 ```
@@ -43,9 +43,11 @@ This is pretty straightforward and really doesn't need any further introduction.
 /remote
 ```
 <sup>_* Command can be used only by operators (if set)_</sup>
-# Building your Slack app
+# Building your very own Slack app!
+## Interactivity & shortcuts
+Interactivity must be set `on` and point request URL into `https://yourserver.com/slack/` (with trailing slash which makes it to point to `index.php`, this is important!).
 ## Slash commands
-Every command uses the same request URL `https://yourserver.com/slack/` (with trailing slash which makes it to point to `index.php`, this is important!).
+Every command uses the same request URL `https://yourserver.com/slack/` (again with trailing slash).
 
 | Command   | Short description      | Usage hint         |
 |-----------|------------------------|--------------------|
@@ -55,11 +57,11 @@ Every command uses the same request URL `https://yourserver.com/slack/` (with tr
 | /remote   | Player remote control  |                    |
 | /operator | Add or remove operator | add\|del @username |
 | /channel  | Join or leave channel  | add\|del #channel  |
-## OAuth & Permissions
-### OAuth Tokens
-Bot user OAuth token must be provided in definitions.
+## OAuth & permissions
+### OAuth tokens
+Bot user (not user) OAuth token must be provided in definitions.
 ### Scopes
 #### Bot token scopes
 This list is still under figuring it out...
 # Cache
-SpotifyBaton uses its own local server-side storage to cache Slack channels and users due to Slack endpoint rate limitations. Stored data expire in 10 minutes and will be refreshed after that. 
+SpotifyBaton uses its own local server-side storage to cache Slack channels and users due to Slack endpoint rate limitations. Stored data expire in 10 minutes and will be refreshed after that.
