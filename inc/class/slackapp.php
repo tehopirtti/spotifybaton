@@ -238,7 +238,25 @@ class SlackApp extends SpotifyBaton {
 
     }
 
-    private function action_voteskip_start() {
+    private function action_voteskip_start(): bool {
+
+        // Song changed before start
+        if ($this->action['value'] != $this->player_current()["track"]["uri"]) {
+
+            $this->debug("song changed before start");
+
+            $this->slack_response($this->payload['response_url'], [
+                "blocks" => [
+                    $this->block_track($this->track($this->action['value'])),
+                    $this->block_divider(),
+                    $this->block_mrkdwn("*Song changed before vote started*")
+                ],
+                "replace_original" => true
+            ]);
+
+            return false;
+
+        }
 
         $this->session['voteskip'] = [
             "created" => time(),
@@ -258,6 +276,8 @@ class SlackApp extends SpotifyBaton {
 
         $this->action_voteskip();
 
+        return true;
+
     }
 
     private function action_voteskip_cancel() {
@@ -272,7 +292,7 @@ class SlackApp extends SpotifyBaton {
 
     private function action_voteskip() {
 
-        $item = $this->track($this->session['voteskip']['uri']);
+        $item = $this->track($this->session["voteskip"]["uri"]);
 
         $blocks = [$this->block_header("Vote skip", "mega")];
 
@@ -283,13 +303,7 @@ class SlackApp extends SpotifyBaton {
         // Vote expired
         if ($this->session['voteskip']['expires'] < time()) {
 
-            $blocks[] = [
-                "type" => "section",
-                "text" => [
-                    "type" => "mrkdwn",
-                    "text" => "*Vote skip expired before there were enough votes*"
-                ]
-            ];
+            $blocks[] = $this->block_mrkdwn("*Vote skip expired before there were enough votes*");
 
             $this->slack_post("chat.update", [
                 "channel" => $this->payload['channel']['id'],
@@ -304,13 +318,7 @@ class SlackApp extends SpotifyBaton {
         // Song changed
         if ($this->session['voteskip']['uri'] != $this->player_current()['track']['uri']) {
 
-            $blocks[] = [
-                "type" => "section",
-                "text" => [
-                    "type" => "mrkdwn",
-                    "text" => "*Song changed before vote results*"
-                ]
-            ];
+            $blocks[] = $this->block_mrkdwn("*Song changed before vote results*");
 
             $this->slack_post("chat.update", [
                 "channel" => $this->payload['channel']['id'],
