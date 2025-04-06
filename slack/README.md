@@ -1,7 +1,7 @@
 # WTF?
 SpotifyBaton is a PHP class to conduct Spotify in various ways and this is it's SlackApp extension to bring it's control into Slack users.
 
-From now on, in this readme, SpotifyBaton will refer to the actual Slack application.
+From now on, in this readme, SpotifyBaton will refer to the Slack application.
 # Usage
 Fear not, this is super easy!
 ## Channels
@@ -43,7 +43,23 @@ This is pretty straightforward and really doesn't need any further introduction.
 /remote
 ```
 <sup>_* Command can be used only by operators (if set)_</sup>
-# Needed scopes
-Ugh.... a lot, I guess.
+# Building your Slack app
+## Slash commands
+Every command uses the same request URL `https://yourserver.com/slack/` (with trailing slash which makes it to point to `index.php`, this is important!).
+
+| Command   | Short description      | Usage hint         |
+|-----------|------------------------|--------------------|
+| /np       | Now playing            |                    |
+| /voteskip | Vote skip track        |                    |
+| /track    | Search for tracks      | search query       |
+| /remote   | Player remote control  |                    |
+| /operator | Add or remove operator | add\|del @username |
+| /channel  | Join or leave channel  | add\|del #channel  |
+## OAuth & Permissions
+### OAuth Tokens
+Bot user OAuth token must be provided in definitions.
+### Scopes
+#### Bot token scopes
+This list is still under figuring it out...
 # Cache
-SpotifyBaton uses its own local serverside storage to cache Slack channels and users due to Slack endpoint rate limitations. Stored data expire in 10 minutes and will be refreshed after that. 
+SpotifyBaton uses its own local server-side storage to cache Slack channels and users due to Slack endpoint rate limitations. Stored data expire in 10 minutes and will be refreshed after that. 
