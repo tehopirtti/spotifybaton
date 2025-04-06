@@ -32,6 +32,94 @@ class SlackApp extends SpotifyBaton {
 
     }
 
+    private function command_channel(): array {
+
+        $blocks = [$this->block_header("Manage channels", "house_with_garden")];
+
+        if (!$this->is_operator()) {
+
+            $blocks[] = $this->block_mrkdwn("You need to be operator for this command! :neutral_face:");
+
+            return $blocks;
+
+        }
+
+        if (preg_match("/^(.+?) #(.+)$/", $this->request["text"], $command)) {
+
+            if (!empty($channel = $this->slack_find_channel($command[2]))) {
+
+                if (empty($this->session["channels"])) {
+
+                    $this->session["channels"] = [];
+
+                }
+
+                switch ($command[1]) {
+
+                    case "add":
+
+                        if (in_array($channel, $this->session["channels"])) {
+
+                            $blocks[] = $this->block_mrkdwn("Already in <#{$channel}> :face_with_monocle:");
+
+                        } else {
+
+                            $this->session["channels"][] = $channel;
+
+                            $this->slack_post("conversations.join", [
+                                "channel" => $channel
+                            ]);
+
+                            $blocks[] = $this->block_mrkdwn("Joined in <#{$channel}> :saluting_face:");
+
+                        }
+
+                        break;
+
+                    case "del":
+
+                        if (($index = array_search($channel, $this->session["channels"])) !== false) {
+
+                            unset($this->session["channels"][$index]);
+
+                            $this->slack_post("conversations.leave", [
+                                "channel" => $channel
+                            ]);
+
+                            $blocks[] = $this->block_mrkdwn("Left <#{$channel}> :saluting_face:");
+
+                        } else {
+
+                            $blocks[] = $this->block_mrkdwn("I'm not in <#{$channel}> :face_with_monocle:");
+
+                        }
+
+                        break;
+
+                    default:
+
+                        $blocks[] = $this->block_mrkdwn("You want me to do what with <#{$channel}> :face_with_raised_eyebrow:");
+
+                        break;
+
+                }
+
+            } else {
+
+                $blocks[] = $this->block_mrkdwn("Channel not found :face_with_monocle:");
+
+            }
+
+        } else {
+
+            $blocks[] = $this->block_mrkdwn("Something went horribly wrong! :face_with_peeking_eye:");
+
+        }
+
+        return $blocks;
+
+    }
+
     private function command_operator(): array {
 
         $blocks = [$this->block_header("Manage operators", "identification_card")];
@@ -570,6 +658,25 @@ class SlackApp extends SpotifyBaton {
 
     }
 
+    private function in_channel(string $channel): bool {
+
+        if (empty($this->session["channels"])) {
+
+            // Channels not defined so it's FFA
+            return true;
+
+        }
+
+        if (in_array($channel, $this->session["channels"])) {
+
+            return true;
+
+        }
+
+        return false;
+
+    }
+
     private function slack_find_user(string $username): string {
 
         if (empty($this->session["userslist"]["created"]) || $this->session["userslist"]["created"] < strtotime("-10 minutes")) {
@@ -598,6 +705,50 @@ class SlackApp extends SpotifyBaton {
             foreach ($this->session["userslist"]["users"] as $id => $name) {
 
                 if ($name === $username) {
+
+                    return $id;
+
+                }
+
+            }
+
+        }
+
+        return "";
+
+    }
+
+    private function slack_find_channel(string $channelname): string {
+
+        if (empty($this->session["conversationslist"]["created"]) || $this->session["conversationslist"]["created"] < strtotime("-10 minutes")) {
+
+            $channels = $this->slack_post("conversations.list", [
+                "types" => "public_channel,private_channel",
+                "limit" => 1000
+            ]);
+
+            if (!empty($channels["channels"])) {
+
+                $this->session["conversationslist"] = [
+                    "created" => time(),
+                    "channels" => []
+                ];
+
+                foreach ($channels["channels"] as $channel) {
+
+                    $this->session["conversationslist"]["channels"][$channel["id"]] = $channel["name"];
+
+                }
+
+            }
+
+        }
+
+        if (!empty($this->session["conversationslist"]["channels"])) {
+
+            foreach ($this->session["conversationslist"]["channels"] as $id => $name) {
+
+                if ($name === $channelname) {
 
                     return $id;
 
