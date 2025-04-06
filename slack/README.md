@@ -45,7 +45,7 @@ This is pretty straightforward and really doesn't need any further introduction.
 <sup>_* Command can be used only by operators (if set)_</sup>
 # Building your very own Slack app!
 ## Interactivity & shortcuts
-Interactivity must be set `on` and point request URL into `https://yourserver.com/slack/` (with trailing slash which makes it to point to `index.php`, this is important!).
+Interactivity must be set `on` and request URL point into `https://yourserver.com/slack/` (with trailing slash which makes it to point into `index.php`, this is important!).
 ## Slash commands
 Every command uses the same request URL `https://yourserver.com/slack/` (again with trailing slash).
 
@@ -62,6 +62,6 @@ Every command uses the same request URL `https://yourserver.com/slack/` (again w
 Bot user (not user) OAuth token must be provided in definitions.
 ### Scopes
 #### Bot token scopes
-This list is still under figuring it out...
+This list is still under 'figuring it out'...
 # Cache
 SpotifyBaton uses its own local server-side storage to cache Slack channels and users due to Slack endpoint rate limitations. Stored data expire in 10 minutes and will be refreshed after that.

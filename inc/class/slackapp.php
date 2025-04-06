@@ -16,7 +16,7 @@ class SlackApp extends SpotifyBaton {
 
         }
 
-        if (!empty($_REQUEST['command']) && preg_match("/^\/(.+)$/", $_REQUEST['command'], $command)) {
+        if (!empty($_REQUEST["command"]) && preg_match("/^\/(.+)$/", $_REQUEST["command"], $command)) {
 
             $this->handle_command($command[1], $_REQUEST);
 
@@ -229,7 +229,7 @@ class SlackApp extends SpotifyBaton {
         $blocks[] = [
             "type" => "actions",
             "elements" => [
-                $this->block_button("Start", "voteskip_start", $item['track']['uri'], "primary"),
+                $this->block_button("Start", "voteskip_start", $item["track"]["uri"], "primary"),
                 $this->block_button("Cancel", "voteskip_cancel", null, "danger")
             ]
         ];
@@ -241,11 +241,11 @@ class SlackApp extends SpotifyBaton {
     private function action_voteskip_start(): bool {
 
         // Song changed before start
-        if ($this->action['value'] != $this->player_current()["track"]["uri"]) {
+        if ($this->action["value"] != $this->player_current()["track"]["uri"]) {
 
-            $this->slack_response($this->payload['response_url'], [
+            $this->slack_response($this->payload["response_url"], [
                 "blocks" => [
-                    $this->block_track($this->track($this->action['value'])),
+                    $this->block_track($this->track($this->action["value"])),
                     $this->block_divider(),
                     $this->block_mrkdwn("*Song changed before vote started*")
                 ],
@@ -256,11 +256,11 @@ class SlackApp extends SpotifyBaton {
 
         }
 
-        $this->session['voteskip'] = [
+        $this->session["voteskip"] = [
             "created" => time(),
             "expires" => strtotime("+1 minute"),
             "ts" => "",
-            "uri" => $this->action['value'],
+            "uri" => $this->action["value"],
             "votes" => [
                 "yes" => 0,
                 "no" => 0,
@@ -268,7 +268,7 @@ class SlackApp extends SpotifyBaton {
             ]
         ];
 
-        $this->slack_response($this->payload['response_url'], [
+        $this->slack_response($this->payload["response_url"], [
             "delete_original" => true
         ]);
 
@@ -280,9 +280,9 @@ class SlackApp extends SpotifyBaton {
 
     private function action_voteskip_cancel() {
 
-        unset($this->session['voteskip']);
+        unset($this->session["voteskip"]);
 
-        $this->slack_response($this->payload['response_url'], [
+        $this->slack_response($this->payload["response_url"], [
             "delete_original" => true
         ]);
 
@@ -299,13 +299,13 @@ class SlackApp extends SpotifyBaton {
         $blocks[] = $this->block_divider();
 
         // Vote expired
-        if ($this->session['voteskip']['expires'] < time()) {
+        if ($this->session["voteskip"]["expires"] < time()) {
 
             $blocks[] = $this->block_mrkdwn("*Vote skip expired before there were enough votes*");
 
             $this->slack_post("chat.update", [
-                "channel" => $this->payload['channel']['id'],
-                "ts" => $this->session['voteskip']['ts'],
+                "channel" => $this->payload["channel"]["id"],
+                "ts" => $this->session["voteskip"]["ts"],
                 "blocks" => $blocks
             ]);
 
@@ -314,13 +314,13 @@ class SlackApp extends SpotifyBaton {
         }
 
         // Song changed
-        if ($this->session['voteskip']['uri'] != $this->player_current()['track']['uri']) {
+        if ($this->session["voteskip"]["uri"] != $this->player_current()["track"]["uri"]) {
 
             $blocks[] = $this->block_mrkdwn("*Song changed before vote results*");
 
             $this->slack_post("chat.update", [
-                "channel" => $this->payload['channel']['id'],
-                "ts" => $this->session['voteskip']['ts'],
+                "channel" => $this->payload["channel"]["id"],
+                "ts" => $this->session["voteskip"]["ts"],
                 "blocks" => $blocks
             ]);
 
@@ -328,21 +328,20 @@ class SlackApp extends SpotifyBaton {
 
         }
 
-        #$this->session['voteskip']['votes']['users'][$this->payload['user']['id']] = $this->action['value'];
-        $this->session['voteskip']['votes']['users'][] = $this->action['value'];
-        $this->session['voteskip']['votes']['yes'] = count(array_filter($this->session['voteskip']['votes']['users'], fn($user) => $user === "yes"));
-        $this->session['voteskip']['votes']['no'] = count(array_filter($this->session['voteskip']['votes']['users'], fn($user) => $user === "no"));
+        $this->session["voteskip"]["votes"]["users"][$this->payload["user"]["id"]] = $this->action["value"];
+        $this->session["voteskip"]["votes"]["yes"] = count(array_filter($this->session["voteskip"]["votes"]["users"], fn($user) => $user === "yes"));
+        $this->session["voteskip"]["votes"]["no"] = count(array_filter($this->session["voteskip"]["votes"]["users"], fn($user) => $user === "no"));
 
         // Vote passed
-        if ($this->session['voteskip']['votes']['yes'] >= 5) {
+        if ($this->session["voteskip"]["votes"]["yes"] >= 5) {
 
             $this->player_next();
 
             $blocks[] = $this->block_mrkdwn("*Skipped by vote*");
 
             $this->slack_post("chat.update", [
-                "channel" => $this->payload['channel']['id'],
-                "ts" => $this->session['voteskip']['ts'],
+                "channel" => $this->payload["channel"]["id"],
+                "ts" => $this->session["voteskip"]["ts"],
                 "blocks" => $blocks
             ]);
 
@@ -351,13 +350,13 @@ class SlackApp extends SpotifyBaton {
         }
 
         // Vote did not pass
-        if ($this->session['voteskip']['votes']['no'] >= 5) {
+        if ($this->session["voteskip"]["votes"]["no"] >= 5) {
 
             $blocks[] = $this->block_mrkdwn("*Remains by vote*");
 
             $this->slack_post("chat.update", [
-                "channel" => $this->payload['channel']['id'],
-                "ts" => $this->session['voteskip']['ts'],
+                "channel" => $this->payload["channel"]["id"],
+                "ts" => $this->session["voteskip"]["ts"],
                 "blocks" => $blocks
             ]);
 
@@ -372,7 +371,7 @@ class SlackApp extends SpotifyBaton {
             "type" => "section",
             "text" => [
                 "type" => "mrkdwn",
-                "text" => str_repeat(":large_green_square:", $this->session['voteskip']['votes']['yes']) . str_repeat(":black_large_square:", 5- $this->session['voteskip']['votes']['yes'])
+                "text" => str_repeat(":large_green_square:", $this->session["voteskip"]["votes"]["yes"]) . str_repeat(":black_large_square:", 5- $this->session["voteskip"]["votes"]["yes"])
             ],
             "accessory" => [
                 "type" => "button",
@@ -391,7 +390,7 @@ class SlackApp extends SpotifyBaton {
             "type" => "section",
             "text" => [
                 "type" => "mrkdwn",
-                "text" => str_repeat(":large_red_square:", $this->session['voteskip']['votes']['no']) . str_repeat(":black_large_square:", 5 - $this->session['voteskip']['votes']['no'])
+                "text" => str_repeat(":large_red_square:", $this->session["voteskip"]["votes"]["no"]) . str_repeat(":black_large_square:", 5 - $this->session["voteskip"]["votes"]["no"])
             ],
             "accessory" => [
                 "type" => "button",
@@ -406,19 +405,19 @@ class SlackApp extends SpotifyBaton {
             ]
         ];
 
-        if (empty($this->session['voteskip']['ts'])) {
+        if (empty($this->session["voteskip"]["ts"])) {
 
             // Start vote
             $response = $this->slack_post("chat.postMessage", [
-                "channel" => $this->payload['channel']['id'],
+                "channel" => $this->payload["channel"]["id"],
                 "blocks" => $blocks,
                 "unfurl_links" => false,
                 "unfurl_media" => false
             ]);
 
-            if (!empty($response['ts'])) {
+            if (!empty($response["ts"])) {
 
-                $this->session['voteskip']['ts'] = $response['ts'];
+                $this->session["voteskip"]["ts"] = $response["ts"];
 
             }
 
@@ -426,8 +425,8 @@ class SlackApp extends SpotifyBaton {
 
             // Update vote
             $this->slack_post("chat.update", [
-                "channel" => $this->payload['channel']['id'],
-                "ts" => $this->session['voteskip']['ts'],
+                "channel" => $this->payload["channel"]["id"],
+                "ts" => $this->session["voteskip"]["ts"],
                 "blocks" => $blocks
             ]);
 
@@ -473,7 +472,7 @@ class SlackApp extends SpotifyBaton {
             "type" => "actions",
             "elements" => [
                 $this->block_button("Previous", "remote_prev"),
-                $this->block_button("Play", "remote_play"),
+                $this->block_button("Play", "remote_play", null, "primary"),
                 $this->block_button("Pause", "remote_pause"),
                 $this->block_button("Next", "remote_next"),
                 $this->block_button("Close", "remote_close", null, "danger")
@@ -510,7 +509,7 @@ class SlackApp extends SpotifyBaton {
 
     private function action_remote_close() {
 
-        $this->slack_response($this->payload['response_url'], [
+        $this->slack_response($this->payload["response_url"], [
             "delete_original" => true
         ]);
 
@@ -518,7 +517,7 @@ class SlackApp extends SpotifyBaton {
 
     private function command_track(): array {
 
-        $items = $this->search($this->request['text']);
+        $items = $this->search($this->request["text"]);
 
         $blocks = [$this->block_header("Search track", "mag")];
 
@@ -537,8 +536,8 @@ class SlackApp extends SpotifyBaton {
             $blocks[] = [
                 "type" => "actions",
                 "elements" => [
-                    $this->block_button("Add to queue", "player_queue", $item['track']['uri'], "primary"),
-                    $this->block_button("Share to channel", "track_share", $item['track']['uri'])
+                    $this->block_button("Add to queue", "player_queue", $item["track"]["uri"], "primary"),
+                    $this->block_button("Share to channel", "track_share", $item["track"]["uri"])
                 ]
             ];
 
@@ -559,7 +558,7 @@ class SlackApp extends SpotifyBaton {
 
     private function action_player_queue() {
 
-        $item = $this->track($this->action['value']);
+        $item = $this->track($this->action["value"]);
 
         $this->player_queue($item["track"]["uri"]);
 
@@ -577,7 +576,7 @@ class SlackApp extends SpotifyBaton {
 
     private function action_track_share() {
 
-        $item = $this->track($this->action['value']);
+        $item = $this->track($this->action["value"]);
 
         $blocks = [$this->block_header("Track shared", "loud_sound")];
 
@@ -597,7 +596,7 @@ class SlackApp extends SpotifyBaton {
 
     private function action_search_close() {
 
-        $this->slack_response($this->payload['response_url'], [
+        $this->slack_response($this->payload["response_url"], [
             "delete_original" => true
         ]);
 
@@ -605,14 +604,14 @@ class SlackApp extends SpotifyBaton {
 
     private function handle_action(array $payload) {
 
-        foreach ($payload['actions'] as $action) {
+        foreach ($payload["actions"] as $action) {
 
-            if (method_exists(get_class($this), "action_{$action['action_id']}")) {
+            if (method_exists(get_class($this), "action_{$action["action_id"]}")) {
 
                 $this->payload = $payload;
                 $this->action = $action;
 
-                $this->{"action_{$action['action_id']}"}();
+                $this->{"action_{$action["action_id"]}"}();
 
             }
 
@@ -865,15 +864,15 @@ class SlackApp extends SpotifyBaton {
             "text" => [
                 "type" => "mrkdwn",
                 "text" => implode("\n", [
-                    "*<{$this->uri2url($item['track']['uri'])}|{$item['track']['title']}>*",
-                    ":cd: <{$this->uri2url($item['album']['uri'])}|{$item['album']['title']}>",
-                    ":speaking_head_in_silhouette: {$this->format_artists($item['artists'], "slack")}",
-                    ":calendar: " . date("j.n.Y", $item['released'])
+                    "*<{$this->uri2url($item["track"]["uri"])}|{$item["track"]["title"]}>*",
+                    ":cd: <{$this->uri2url($item["album"]["uri"])}|{$item["album"]["title"]}>",
+                    ":speaking_head_in_silhouette: {$this->format_artists($item["artists"], "slack")}",
+                    ":calendar: " . date("j.n.Y", $item["released"])
                 ])
             ],
             "accessory" => [
                 "type" => "image",
-                "image_url" => $item['cover'],
+                "image_url" => $item["cover"],
                 "alt_text" => "Album cover"
             ]
         ];
