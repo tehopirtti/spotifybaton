@@ -216,7 +216,7 @@ class SlackApp extends SpotifyBaton {
 
         if (empty($item)) {
 
-            $blocks[] = $this->block_mrkdwn("There are no playback going on for this action :face_with_monocle:");
+            $blocks[] = $this->block_mrkdwn("There are no playback going on :face_with_monocle:");
 
             return $blocks;
 
@@ -655,17 +655,7 @@ class SlackApp extends SpotifyBaton {
             return true;
 
         }
-/*
-        foreach ($this->session["operators"] as $operator) {
 
-            if ($operator === $this->request["user_id"]) {
-
-                return true;
-
-            }
-
-        }
-*/
         return false;
 
     }
@@ -790,8 +780,6 @@ class SlackApp extends SpotifyBaton {
 
         $response = json_decode(curl_exec($this->curl), true);
 
-        $this->debug($response);
-
         return $response;
 
     }
@@ -812,8 +800,6 @@ class SlackApp extends SpotifyBaton {
         ]);
 
         $response = json_decode(curl_exec($this->curl), true);
-
-        $this->debug($response);
 
         return $response;
 
