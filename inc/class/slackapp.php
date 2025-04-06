@@ -578,7 +578,10 @@ class SlackApp extends SpotifyBaton {
 
             if (!empty($users["members"])) {
 
-                $this->session["userslist"]["users"] = [];
+                $this->session["userslist"] = [
+                    "created" => time(),
+                    "users" => []
+                ];
 
                 foreach ($users["members"] as $user) {
 
