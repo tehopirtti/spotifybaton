@@ -326,6 +326,15 @@ class SpotifyBaton {
 
     }
 
+    /**
+     * Start/Resume Playback
+     *
+     * Start a new context or resume current playback on the user's active device.
+     * This API only works for users who have Spotify Premium.
+     * The order of execution is not guaranteed when you use this API with other Player API endpoints.
+     *
+     * @return bool
+     */
     public function player_play(): bool {
 
         $this->curl_options([
@@ -340,6 +349,15 @@ class SpotifyBaton {
 
     }
 
+    /**
+     * Pause Playback
+     *
+     * Pause playback on the user's account.
+     * This API only works for users who have Spotify Premium.
+     * The order of execution is not guaranteed when you use this API with other Player API endpoints.
+     *
+     * @return bool
+     */
     public function player_pause(): bool {
 
         $this->curl_options([
@@ -466,11 +484,30 @@ class SpotifyBaton {
 
     }
 
+    /**
+     * Format track data into general shape for global usage.
+     * Data may be in different locations depending on scenario.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
     private function format_track(array $data): array {
 
         $item = $data;
         if (!empty($data["item"])) $item = $data["item"];
         if (!empty($data["track"])) $item = $data["track"];
+
+        $artists = [];
+
+        foreach ($data["artists"] as $artist) {
+
+            $artists[] = [
+                "uri" => $artist["uri"],
+                "title" => $artist["name"]
+            ];
+
+        }
 
         return [
             "track" => [
@@ -481,7 +518,7 @@ class SpotifyBaton {
                 "uri" => $item["album"]["uri"],
                 "title" => $item["album"]["name"]
             ],
-            "artists" => $this->artists2array($item["artists"]),
+            "artists" => $artists,
             "released" => strtotime($item["album"]["release_date"]),
             "cover" => $this->format_cover($item["album"]["images"]),
             "position" => $data["progress_ms"] ?? 0,
@@ -493,23 +530,14 @@ class SpotifyBaton {
 
     }
 
-    private function artists2array(array $data): array {
-
-        $artists = [];
-
-        foreach ($data as $artist) {
-
-            $artists[] = [
-                "uri" => $artist["uri"],
-                "title" => $artist["name"]
-            ];
-
-        }
-
-        return $artists;
-
-    }
-
+    /**
+     * Convert artist data into wanted format for convenient usage.
+     *
+     * @param array $data
+     * @param string $format
+     *
+     * @return string
+     */
     public function format_artists(array $data, string $format = "none"): string {
 
         $artists = [];
@@ -518,6 +546,7 @@ class SpotifyBaton {
 
             $artists[] = match ($format) {
 
+                "href" => "<a href=\"{$this->uri2url($artist["uri"])}\" target=\"_blank\">{$artist["title"]}</a>",
                 "slack" => "<{$this->uri2url($artist["uri"])}|{$artist["title"]}>",
                 default => $artist["title"]
 
@@ -529,6 +558,14 @@ class SpotifyBaton {
 
     }
 
+    /**
+     * Get cover image in the closest desired size.
+     *
+     * @param array $data
+     * @param int $max_size
+     *
+     * @return string
+     */
     private function format_cover(array $data, int $max_size = 640): string {
 
         foreach ($data as $image) {
@@ -543,6 +580,13 @@ class SpotifyBaton {
 
     }
 
+    /**
+     * Convert Spotify URI into URL.
+     *
+     * @param string $uri
+     *
+     * @return string
+     */
     public function uri2url(string $uri): string {
 
         preg_match("/^(spotify):(.+?):(.+)$/", $uri, $uri);
@@ -551,6 +595,13 @@ class SpotifyBaton {
 
     }
 
+    /**
+     * Handle cURL options by user parameters.
+     *
+     * @param array $parameters
+     *
+     * @return bool
+     */
     private function curl_options(array $parameters = []): bool {
 
         curl_reset($this->curl);
@@ -602,6 +653,8 @@ class SpotifyBaton {
     }
 
     /**
+     * Get cURL response main class because Spotify uses variety of specific codes.
+     *
      * @param int $class
      *
      * @return bool
@@ -612,6 +665,13 @@ class SpotifyBaton {
 
     }
 
+    /**
+     * Log some stuff while debugging.
+     *
+     * @param string|array $stuff
+     *
+     * @return bool
+     */
     public function debug(string|array $stuff): bool {
 
         if (is_array($stuff)) $stuff = print_r($stuff, true);
