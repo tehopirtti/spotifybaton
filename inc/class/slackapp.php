@@ -190,6 +190,10 @@ class SlackApp extends SpotifyBaton {
 
             }
 
+        } else {
+
+            $blocks[] = $this->block_mrkdwn("Something went horribly wrong! :face_with_peeking_eye:");
+
         }
 
         return $blocks;
@@ -653,7 +657,7 @@ class SlackApp extends SpotifyBaton {
             }
 
         }
-
+*/
         return false;
 
     }
