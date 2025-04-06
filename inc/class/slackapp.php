@@ -550,6 +550,12 @@ class SlackApp extends SpotifyBaton {
 
         }
 
+        if (in_array($this->request["user_id"], $this->session["operators"])) {
+
+            return true;
+
+        }
+/*
         foreach ($this->session["operators"] as $operator) {
 
             if ($operator === $this->request["user_id"]) {
