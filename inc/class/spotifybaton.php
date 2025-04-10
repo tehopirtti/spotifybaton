@@ -34,9 +34,9 @@ class SpotifyBaton {
 
         }
 
-        if (file_exists(SPOTIFYBATON_CACHE)) {
+        if (file_exists(SPOTIFY_CACHE)) {
 
-            $cache = json_decode(file_get_contents(SPOTIFYBATON_CACHE), true);
+            $cache = json_decode(file_get_contents(SPOTIFY_CACHE), true);
 
             if (!empty($cache["access_token"])) {
 
@@ -189,7 +189,7 @@ class SpotifyBaton {
 
         if ($save_cache) {
 
-            file_put_contents(SPOTIFYBATON_CACHE, json_encode($data), JSON_PRETTY_PRINT);
+            file_put_contents(SPOTIFY_CACHE, json_encode($data), JSON_PRETTY_PRINT);
 
         }
 
