@@ -25,7 +25,7 @@ foreach ($sb->player_upcoming() as $item) {
     print "<p>{$item["track"]["title"]}</p>";
     print "<p>{$item["album"]["title"]}</p>";
     print "<p>{$sb->format_artists($item["artists"])}</p>";
-    print "<p>" . $sb->format_duration($item["duration"]) . "</p>";
+    print "<p>{$sb->format_duration($item["duration"])}</p>";
     print "</section>";
 
 }
@@ -45,7 +45,7 @@ if (!empty($item["track"]["title"])) {
     print "<p>{$item["track"]["title"]}</p>";
     print "<p>{$item["album"]["title"]}</p>";
     print "<p>{$sb->format_artists($item["artists"])}</p>";
-    print "<p>" . $sb->format_duration($item["position"]) . " / " . $sb->format_duration($item["duration"]) . "</p>";
+    print "<p>{$sb->format_duration($item["position"])} / {$sb->format_duration($item["duration"])}</p>";
     print "<div class=\"progress\"><div style=\"width: {$item["progress"]}%;\"></div></div>";
     print "</section>";
 
@@ -64,7 +64,7 @@ foreach ($sb->player_history() as $item) {
     print "<p>{$item["track"]["title"]}</p>";
     print "<p>{$item["album"]["title"]}</p>";
     print "<p>{$sb->format_artists($item["artists"])}</p>";
-    print "<p>" . $sb->format_duration($item["duration"]) . " <small>" . date("j.n.Y H.i", $item["played"]) . "</small></p>";
+    print "<p>{$sb->format_duration($item["duration"])} <small>" . date("j.n.Y H.i", $item["played"]) . "</small></p>";
     print "</section>";
 
 }
