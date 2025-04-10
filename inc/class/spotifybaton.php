@@ -18,7 +18,7 @@ class SpotifyBaton {
 
             parse_str($_SERVER["QUERY_STRING"], $query);
 
-            if (!empty($query["code"]) && !empty($query["state"])) {
+            if (!empty($query["code"]) && !empty($query["state"]) && $query["state"] == SPOTIFY_STATE) {
 
                 // User returned from authorization with code, let's exchange it into some tokens!
 
@@ -62,7 +62,7 @@ class SpotifyBaton {
                         "playlist-read-collaborative"
                     ]),
                     "redirect_uri" => SPOTIFY_REDIRECT_URI,
-                    "state" => SPOTIFYBATON_STATE,
+                    "state" => SPOTIFY_STATE,
                     "show_dialog" => "false"
                 ]));
 
