@@ -559,6 +559,23 @@ class SpotifyBaton {
     }
 
     /**
+     * Convert milliseconds into representative minutes and seconds format.
+     *
+     * @param int $milliseconds
+     *
+     * @return string
+     */
+    public function format_duration(int $milliseconds): string {
+
+        $seconds = floor($milliseconds / 1000);
+        $minutes = floor($seconds / 60);
+        $seconds = $seconds % 60;
+
+        return "{$minutes} min {$seconds} s";
+
+    }
+
+    /**
      * Get cover image in the closest desired size.
      *
      * @param array $data
