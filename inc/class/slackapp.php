@@ -564,7 +564,7 @@ class SlackApp extends SpotifyBaton {
 
         $blocks[] = $this->block_track($item);
 
-        if ($item["duration"] > SPOTIFYBATON_QUEUE_MAX_DURATION) {
+        if (!empty(SPOTIFYBATON_QUEUE_MAX_DURATION) && $item["duration"] > SPOTIFYBATON_QUEUE_MAX_DURATION) {
 
             $blocks[] = $this->block_mrkdwn("Track could not be queued because it's duration exceed maximum of {$this->format_duration(SPOTIFYBATON_QUEUE_MAX_DURATION)} :cry:");
 
