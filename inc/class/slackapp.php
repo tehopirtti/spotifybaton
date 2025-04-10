@@ -1,5 +1,5 @@
 <?php
-// TODO add an option to restrict track max length when adding into queue
+
 class SlackApp extends SpotifyBaton {
 
     private array $session, $action, $payload, $request;
