@@ -258,7 +258,7 @@ class SlackApp extends SpotifyBaton {
 
         $this->session["voteskip"] = [
             "created" => time(),
-            "expires" => strtotime("+1 minute"),
+            "expires" => time() + (SPOTIFYBATON_VOTESKIP_EXPIRES / 1000),
             "ts" => "",
             "uri" => $this->action["value"],
             "votes" => [
@@ -298,8 +298,9 @@ class SlackApp extends SpotifyBaton {
 
         $blocks[] = $this->block_divider();
 
-        // Vote expired
-        if ($this->session["voteskip"]["expires"] < time()) {
+        if (!empty(SPOTIFYBATON_VOTESKIP_EXPIRES) && $this->session["voteskip"]["expires"] < time()) {
+
+            // Vote expired
 
             $blocks[] = $this->block_mrkdwn("*Vote skip expired before there were enough votes*");
 
@@ -365,7 +366,15 @@ class SlackApp extends SpotifyBaton {
         }
 
         // Vote blocks
-        $blocks[] = $this->block_mrkdwn("*Vote skip currently playing song* (expires at " . date("H.i", strtotime("+1 minute")) . ")");
+        $vote_text = "*Vote skip currently playing song*";
+
+        if (!empty(SPOTIFYBATON_VOTESKIP_EXPIRES)) {
+
+            $vote_text .= " (expires at " . date("H.i.s", $this->session["voteskip"]["created"] + (SPOTIFYBATON_VOTESKIP_EXPIRES / 1000)) . ")";
+
+        }
+
+        $blocks[] = $this->block_mrkdwn($vote_text);
 
         $blocks[] = [
             "type" => "section",

@@ -13,6 +13,7 @@ foreach ([
     "SLACK_BOT_USER_ID" => "", // Do we really need this?
     "SLACK_SESSION" => "/home/spotifybaton/slack.json", // Storage for voting data, user/channel cache (because rate limitations) etc...
     "SPOTIFYBATON_LOG" => "/home/spotifybaton/log", // Only for debugging at the moment, proper logs incoming!
+    "SPOTIFYBATON_VOTESKIP_EXPIRES" => 90000, // Set vote skip expiration time in milliseconds (0 to disable).
     "SPOTIFYBATON_QUEUE_MAX_DURATION" => 522000 // Limit the maximum duration of queued track in milliseconds (0 to disable).
 ] as $key => $value) {
 

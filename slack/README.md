@@ -26,7 +26,7 @@ Shows preview before actual vote, where user can start or cancel it.
 There are some rules in the voting system:
 - every user can vote only once for yes or no (vote can be changed)
 - needs five yes or no votes to perform any action
-- expires in one minute
+- if set, expires in given time
 ## Track search and queue
 Search tracks from Spotify by given keywords and shows top three results. From results user can add track into queue or share it into current channel.
 ```
