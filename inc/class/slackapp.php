@@ -1,5 +1,5 @@
 <?php
-
+// TODO add an option to restrict track max length when adding into queue
 class SlackApp extends SpotifyBaton {
 
     private array $session, $action, $payload, $request;
@@ -560,11 +560,21 @@ class SlackApp extends SpotifyBaton {
 
         $item = $this->track($this->action["value"]);
 
-        $this->player_queue($item["track"]["uri"]);
-
-        $blocks = [$this->block_header("Track queued", "loud_sound")];
+        $blocks = [$this->block_header("Track queue", "loud_sound")];
 
         $blocks[] = $this->block_track($item);
+
+        if ($item["duration"] > SPOTIFYBATON_QUEUE_MAX_DURATION) {
+
+            $blocks[] = $this->block_mrkdwn("Track could not be queued because it's duration exceed maximum of {$this->format_duration(SPOTIFYBATON_QUEUE_MAX_DURATION)} :cry:");
+
+        } else {
+
+            $this->player_queue($item["track"]["uri"]);
+
+            $blocks[] = $this->block_mrkdwn("Track added into queue :saluting_face:");
+
+        }
 
         $this->slack_post("chat.postEphemeral", [
             "channel" => $this->payload["channel"]["id"],
@@ -580,7 +590,7 @@ class SlackApp extends SpotifyBaton {
 
         $blocks = [$this->block_header("Track shared", "loud_sound")];
 
-        $blocks[] = $this->block_mrkdwn("<@{$this->payload["user"]["id"]}> wants you to listen this!");;
+        $blocks[] = $this->block_mrkdwn("<@{$this->payload["user"]["id"]}> wants you to listen this!");
 
         $blocks[] = $this->block_track($item);
 
