@@ -333,8 +333,12 @@ class SlackApp extends SpotifyBaton {
         $this->session["voteskip"]["votes"]["yes"] = count(array_filter($this->session["voteskip"]["votes"]["users"], fn($user) => $user === "yes"));
         $this->session["voteskip"]["votes"]["no"] = count(array_filter($this->session["voteskip"]["votes"]["users"], fn($user) => $user === "no"));
 
+        $vote_limit = SPOTIFYBATON_VOTESKIP_LIMIT;
+        if ($vote_limit < 1) $vote_limit = 1;
+        if ($vote_limit > 10) $vote_limit = 10;
+
         // Vote passed
-        if ($this->session["voteskip"]["votes"]["yes"] >= 5) {
+        if ($this->session["voteskip"]["votes"]["yes"] >= $vote_limit) {
 
             $this->player_next();
 
@@ -351,7 +355,7 @@ class SlackApp extends SpotifyBaton {
         }
 
         // Vote did not pass
-        if ($this->session["voteskip"]["votes"]["no"] >= 5) {
+        if ($this->session["voteskip"]["votes"]["no"] >= $vote_limit) {
 
             $blocks[] = $this->block_mrkdwn("*Remains by vote*");
 
@@ -380,7 +384,7 @@ class SlackApp extends SpotifyBaton {
             "type" => "section",
             "text" => [
                 "type" => "mrkdwn",
-                "text" => str_repeat(":large_green_square:", $this->session["voteskip"]["votes"]["yes"]) . str_repeat(":black_large_square:", 5- $this->session["voteskip"]["votes"]["yes"])
+                "text" => str_repeat(":large_green_square:", $this->session["voteskip"]["votes"]["yes"]) . str_repeat(":black_large_square:", $vote_limit - $this->session["voteskip"]["votes"]["yes"])
             ],
             "accessory" => [
                 "type" => "button",
@@ -399,7 +403,7 @@ class SlackApp extends SpotifyBaton {
             "type" => "section",
             "text" => [
                 "type" => "mrkdwn",
-                "text" => str_repeat(":large_red_square:", $this->session["voteskip"]["votes"]["no"]) . str_repeat(":black_large_square:", 5 - $this->session["voteskip"]["votes"]["no"])
+                "text" => str_repeat(":large_red_square:", $this->session["voteskip"]["votes"]["no"]) . str_repeat(":black_large_square:", $vote_limit - $this->session["voteskip"]["votes"]["no"])
             ],
             "accessory" => [
                 "type" => "button",
