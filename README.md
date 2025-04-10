@@ -1,0 +1,1 @@
+![SpotifyBaton](https://raw.githubusercontent.com/tehopirtti/spotifybaton/refs/heads/master/inc/img/logo.png)
