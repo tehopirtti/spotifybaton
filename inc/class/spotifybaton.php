@@ -14,7 +14,7 @@ class SpotifyBaton {
 
         }
 
-        if ($_SERVER["REQUEST_METHOD"] === "GET" && !empty($_SERVER["QUERY_STRING"])) {
+        if (!empty($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] === "GET" && !empty($_SERVER["QUERY_STRING"])) {
 
             parse_str($_SERVER["QUERY_STRING"], $query);
 
