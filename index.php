@@ -12,6 +12,7 @@ $sb = new SpotifyBaton();
         <title>SpotifyBaton</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="stylesheet" href="inc/style.css?<?=filemtime("inc/style.css");?>">
+        <script src="inc/functions.js?<?=filemtime("inc/functions.js");?>"></script>
     </head>
     <body>
         <fieldset>
@@ -45,7 +46,7 @@ if (!empty($item["track"]["title"])) {
     print "<p>{$item["track"]["title"]}</p>";
     print "<p>{$item["album"]["title"]}</p>";
     print "<p>{$sb->format_artists($item["artists"])}</p>";
-    print "<p>{$sb->format_duration($item["position"])} / {$sb->format_duration($item["duration"])}</p>";
+    print "<p class=\"position\"><span>{$sb->format_duration($item["position"])}</span> / {$sb->format_duration($item["duration"])}</p>";
     print "<div class=\"progress\"><div style=\"width: {$item["progress"]}%;\"></div></div>";
     print "</section>";
 

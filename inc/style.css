@@ -51,7 +51,8 @@ section .progress {
 }
 
 section .progress div {
-    width: 70%;
+    width: 0;
     height: 2px;
     background: rgba(0, 255, 0, .2);
+    transition: width 1.28s;
 }
