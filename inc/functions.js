@@ -21,13 +21,19 @@ function format_duration(ms) {
 }
 
 function update() {
+
+    if (!progress.track) {
+
+        return;
+
+    }
     
     let position = progress.position + (Date.now() - progress.updated);
 
     if (position > progress.duration) {
 
         position = progress.duration;
-        
+
         location.reload();
         
     }
@@ -73,6 +79,6 @@ function sync() {
         progress.duration = data.duration;
         progress.updated = Date.now();
 
-    }).catch(err => console.error("Sync error:", err));
+    });
 
 }
