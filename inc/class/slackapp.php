@@ -821,7 +821,7 @@ class SlackApp extends SpotifyBaton {
             CURLOPT_POST => true,
             CURLOPT_HTTPHEADER => [
                 "Content-Type: application/json; charset=utf-8",
-                "Authorization: Bearer " . SLACK_APP_TOKEN
+                "Authorization: Bearer " . SLACK_BOT_TOKEN
             ],
             CURLOPT_POSTFIELDS => json_encode($payload)
         ]);

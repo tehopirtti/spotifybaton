@@ -9,8 +9,7 @@ foreach ([
     "SPOTIFY_STATE" => md5("harri sano, että ei!"), // This provides protection against attacks such as cross-site request forgery.
     "SPOTIFY_REDIRECT_URI" => "https://yourserver.com/", // The URI to redirect to after the user grants or denies permission.
     "SPOTIFY_CACHE" => "/home/spotifybaton/spotify.json", // Contains tokens and other sensitive data, this must not be accessible through internet!
-    "SLACK_APP_TOKEN" => "", // Salck App > OAuth & Permissions > OAuth Tokens > Bot User OAuth Token
-    "SLACK_BOT_USER_ID" => "", // Do we really need this?
+    "SLACK_BOT_TOKEN" => "", // Salck App > OAuth & Permissions > OAuth Tokens > Bot User OAuth Token
     "SLACK_SESSION" => "/home/spotifybaton/slack.json", // Storage for voting data, user/channel cache (because rate limitations) etc...
     "SPOTIFYBATON_LOG" => "/home/spotifybaton/log", // Only for debugging at the moment, proper logs incoming!
     "SPOTIFYBATON_VOTESKIP_LIMIT" => 5, // Set vote skip limit (from 1 to 10).
