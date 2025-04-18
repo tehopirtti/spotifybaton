@@ -553,39 +553,6 @@ class SlackApp extends SpotifyBaton {
 
     }
 
-    private function command_upcoming(): array {
-
-        $blocks = [$this->block_header("Upcoming tracks", "eyes")];
-
-        $items = $this->player_upcoming(3, false);
-
-        if (empty($items)) {
-
-            $blocks[] = $this->block_mrkdwn("No tracks in queue :sob:");
-
-        } else {
-
-            foreach ($items as $item) {
-
-                $blocks[] = $this->block_track($item);
-
-                $blocks[] = $this->block_divider();
-
-            }
-
-        }
-
-        $blocks[] = [
-            "type" => "actions",
-            "elements" => [
-                $this->block_button("Close queue", "close", null, "danger")
-            ]
-        ];
-
-        return $blocks;
-
-    }
-
     private function action_player_queue() {
 
         $item = $this->track($this->action["value"]);
@@ -630,6 +597,21 @@ class SlackApp extends SpotifyBaton {
             "blocks" => json_encode($blocks),
             "unfurl_links" => false,
             "unfurl_media" => false
+        ]);
+
+    }
+
+    private function command_upcoming(): array {
+
+        return $this->blocks_upcoming();
+
+    }
+
+    private function action_upcoming_refresh() {
+
+        $this->slack_response($this->payload["response_url"], [
+            "blocks" => $this->blocks_upcoming(),
+            "replace_original" => true
         ]);
 
     }
@@ -956,6 +938,40 @@ class SlackApp extends SpotifyBaton {
                 $this->block_button("Play", "remote_play", null, "primary"),
                 $this->block_button("Pause", "remote_pause"),
                 $this->block_button("Next", "remote_next"),
+                $this->block_button("Close", "close", null, "danger")
+            ]
+        ];
+
+        return $blocks;
+
+    }
+
+    private function blocks_upcoming(): array {
+
+        $blocks = [$this->block_header("Upcoming tracks", "eyes")];
+
+        $items = $this->player_upcoming(3, false);
+
+        if (empty($items)) {
+
+            $blocks[] = $this->block_mrkdwn("No tracks in queue :sob:");
+
+        } else {
+
+            foreach ($items as $item) {
+
+                $blocks[] = $this->block_track($item);
+
+                $blocks[] = $this->block_divider();
+
+            }
+
+        }
+
+        $blocks[] = [
+            "type" => "actions",
+            "elements" => [
+                $this->block_button("Refresh", "upcoming_refresh", null, "primary"),
                 $this->block_button("Close", "close", null, "danger")
             ]
         ];
