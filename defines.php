@@ -12,7 +12,7 @@ foreach ([
     "SLACK_BOT_TOKEN" => "", // Salck App > OAuth & Permissions > OAuth Tokens > Bot User OAuth Token
     "SLACK_SESSION" => "/home/spotifybaton/slack.json", // Storage for voting data, user/channel cache (because rate limitations) etc...
     "SPOTIFYBATON_LOG" => "/home/spotifybaton/log/main", // File to log some stuff.
-    "SPOTIFYBATON_LOG_LEVEL" => "ICNWF", // Level types to write into log file. See method description for detailed info.
+    "SPOTIFYBATON_LOG_LEVEL" => "ICNWF", // Level types to write into log file (leave empty to disable). See method description for detailed info.
     "SPOTIFYBATON_LOG_DT" => "H.m.s", // Log date and/or time format.
     "SPOTIFYBATON_VOTESKIP_LIMIT" => 5, // Set vote skip limit (from 1 to 10).
     "SPOTIFYBATON_VOTESKIP_EXPIRES" => 90000, // Set vote skip expiration time in milliseconds (0 to disable).
