@@ -42,7 +42,11 @@ This is pretty straightforward and really doesn't need any further introduction.
 ```
 /remote
 ```
-<sup>_* Command can be used only by operators (if set)_</sup>
+## Upcoming tracks
+Shows three upcoming tracks in player queue.
+```
+/upcoming
+```
 # Building your very own Slack app!
 ## Interactivity & shortcuts
 Interactivity must be set `on` and request URL point into `https://yourserver.com/slack/` (with trailing slash which makes it to point into `index.php`, this is important!).
@@ -57,6 +61,7 @@ Every command uses the same request URL `https://yourserver.com/slack/` (again w
 | /remote   | Player remote control  |                    |
 | /operator | Add or remove operator | add\|del @username |
 | /channel  | Join or leave channel  | add\|del #channel  |
+| /upcoming | Show queue             |                    |
 ## OAuth & permissions
 ### OAuth tokens
 Bot user (not user) OAuth token must be provided in definitions.

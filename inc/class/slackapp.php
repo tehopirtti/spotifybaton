@@ -282,9 +282,7 @@ class SlackApp extends SpotifyBaton {
 
         unset($this->session["voteskip"]);
 
-        $this->slack_response($this->payload["response_url"], [
-            "delete_original" => true
-        ]);
+        $this->action_close();
 
     }
 
@@ -514,14 +512,6 @@ class SlackApp extends SpotifyBaton {
 
     }
 
-    private function action_remote_close() {
-
-        $this->slack_response($this->payload["response_url"], [
-            "delete_original" => true
-        ]);
-
-    }
-
     private function command_track(): array {
 
         $items = $this->search($this->request["text"]);
@@ -555,7 +545,40 @@ class SlackApp extends SpotifyBaton {
         $blocks[] = [
             "type" => "actions",
             "elements" => [
-                $this->block_button("Close search", "search_close", null, "danger")
+                $this->block_button("Close search", "close", null, "danger")
+            ]
+        ];
+
+        return $blocks;
+
+    }
+
+    private function command_upcoming(): array {
+
+        $blocks = [$this->block_header("Upcoming tracks", "eyes")];
+
+        $items = $this->player_upcoming(3, false);
+
+        if (empty($items)) {
+
+            $blocks[] = $this->block_mrkdwn("No tracks in queue :sob:");
+
+        } else {
+
+            foreach ($items as $item) {
+
+                $blocks[] = $this->block_track($item);
+
+                $blocks[] = $this->block_divider();
+
+            }
+
+        }
+
+        $blocks[] = [
+            "type" => "actions",
+            "elements" => [
+                $this->block_button("Close queue", "close", null, "danger")
             ]
         ];
 
@@ -611,7 +634,7 @@ class SlackApp extends SpotifyBaton {
 
     }
 
-    private function action_search_close() {
+    private function action_close() {
 
         $this->slack_response($this->payload["response_url"], [
             "delete_original" => true
@@ -933,7 +956,7 @@ class SlackApp extends SpotifyBaton {
                 $this->block_button("Play", "remote_play", null, "primary"),
                 $this->block_button("Pause", "remote_pause"),
                 $this->block_button("Next", "remote_next"),
-                $this->block_button("Close", "remote_close", null, "danger")
+                $this->block_button("Close", "close", null, "danger")
             ]
         ];
 
