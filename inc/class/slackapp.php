@@ -471,28 +471,7 @@ class SlackApp extends SpotifyBaton {
 
     private function command_remote(): array {
 
-        $blocks = [$this->block_header("Remote control", "satellite_antenna")];
-
-        if (!$this->is_operator()) {
-
-            $blocks[] = $this->block_mrkdwn("You need to be operator for this command! :neutral_face:");
-
-            return $blocks;
-
-        }
-
-        $blocks[] = [
-            "type" => "actions",
-            "elements" => [
-                $this->block_button("Previous", "remote_prev"),
-                $this->block_button("Play", "remote_play", null, "primary"),
-                $this->block_button("Pause", "remote_pause"),
-                $this->block_button("Next", "remote_next"),
-                $this->block_button("Close", "remote_close", null, "danger")
-            ]
-        ];
-
-        return $blocks;
+        return $this->blocks_remote();
 
     }
 
@@ -500,11 +479,21 @@ class SlackApp extends SpotifyBaton {
 
         $this->player_previous();
 
+        $this->slack_response($this->payload["response_url"], [
+            "blocks" => $this->blocks_remote(),
+            "replace_original" => true
+        ]);
+
     }
 
     private function action_remote_play() {
 
         $this->player_play();
+
+        $this->slack_response($this->payload["response_url"], [
+            "blocks" => $this->blocks_remote(),
+            "replace_original" => true
+        ]);
 
     }
 
@@ -517,6 +506,11 @@ class SlackApp extends SpotifyBaton {
     private function action_remote_next() {
 
         $this->player_next();
+
+        $this->slack_response($this->payload["response_url"], [
+            "blocks" => $this->blocks_remote(),
+            "replace_original" => true
+        ]);
 
     }
 
@@ -664,22 +658,26 @@ class SlackApp extends SpotifyBaton {
 
     private function is_operator(): bool {
 
-        if (empty($this->request["user_id"])) {
+        if (!empty($this->action)) {
 
-            // Something fishy going on, deny everything!
-            return false;
+            // Internal calls are always permitted
+            return true;
+
+        }
+
+        if (!empty($this->request)) {
+
+            if (!empty($this->request["user_id"]) && in_array($this->request["user_id"], $this->session["operators"])) {
+
+                return true;
+
+            }
 
         }
 
         if (empty($this->session["operators"])) {
 
             // There are no operators, so everyone is!
-            return true;
-
-        }
-
-        if (in_array($this->request["user_id"], $this->session["operators"])) {
-
             return true;
 
         }
@@ -907,6 +905,39 @@ class SlackApp extends SpotifyBaton {
         return [
             "type" => "divider"
         ];
+
+    }
+
+    private function blocks_remote(): array {
+
+        $blocks = [$this->block_header("Remote control", "satellite_antenna")];
+
+        if (!$this->is_operator()) {
+
+            $blocks[] = $this->block_mrkdwn("You need to be operator for this command! :neutral_face:");
+
+            return $blocks;
+
+        }
+
+        if (!empty($item = $this->player_current())) {
+
+            $blocks[] = $this->block_track($item);
+
+        }
+
+        $blocks[] = [
+            "type" => "actions",
+            "elements" => [
+                $this->block_button("Previous", "remote_prev"),
+                $this->block_button("Play", "remote_play", null, "primary"),
+                $this->block_button("Pause", "remote_pause"),
+                $this->block_button("Next", "remote_next"),
+                $this->block_button("Close", "remote_close", null, "danger")
+            ]
+        ];
+
+        return $blocks;
 
     }
 
