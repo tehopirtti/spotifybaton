@@ -5,8 +5,11 @@ class SpotifyBaton {
     protected false|CurlHandle $curl;
     private string $access_token = "", $refresh_token = "";
     private int $expires = 0;
+    private float $runtime;
 
     function __construct() {
+
+        $this->runtime = microtime(true);
 
         if (empty($this->curl)) {
 
@@ -19,6 +22,8 @@ class SpotifyBaton {
             parse_str($_SERVER["QUERY_STRING"], $query);
 
             if (!empty($query["code"]) && !empty($query["state"]) && $query["state"] == SPOTIFY_STATE) {
+
+                $this->log("User returned from authorization with code", "I");
 
                 // User returned from authorization with code, let's exchange it into some tokens!
 
@@ -48,6 +53,8 @@ class SpotifyBaton {
 
         if (empty($this->access_token)) {
 
+            $this->log("Access token missing!", "W");
+
             // No token! Forward user into authorization to get em.
 
             header("Location: https://accounts.spotify.com/authorize?" . http_build_query([
@@ -72,6 +79,8 @@ class SpotifyBaton {
 
         if ($this->expires < time()) {
 
+            $this->log("Access token expired!", "N");
+
             $this->refresh_access_token($this->refresh_token);
 
         }
@@ -88,6 +97,8 @@ class SpotifyBaton {
 
         }
 
+        $this->log(str_pad("[ " . (microtime(true) - $this->runtime) . " ]", 40, "-", STR_PAD_BOTH), "I");
+
     }
 
     /**
@@ -101,6 +112,8 @@ class SpotifyBaton {
      * @return bool
      */
     private function request_access_token(string $code): bool {
+
+        $this->log("Requesting access token...", "I");
 
         $this->curl_options([
             "url" => "https://accounts.spotify.com/api/token",
@@ -132,6 +145,8 @@ class SpotifyBaton {
      */
     private function refresh_access_token(string $refresh_token): bool {
 
+        $this->log("Refreshing access token...", "I");
+
         $this->curl_options([
             "url" => "https://accounts.spotify.com/api/token",
             "authorization" => "basic",
@@ -159,6 +174,8 @@ class SpotifyBaton {
      */
     private function handle_token(array $data, bool $save_cache = true): bool {
 
+        $this->log("Handling token...", "I");
+
         foreach ([
             "access_token",
             "token_type",
@@ -177,9 +194,15 @@ class SpotifyBaton {
 
         if (empty($data["refresh_token"])) {
 
+            $this->log("No new refresh token", "N");
+
             // When a refresh token is not returned, continue using the existing token.
 
             $data["refresh_token"] = $this->refresh_token;
+
+        } else {
+
+            $this->log("New refresh token", "N");
 
         }
 
@@ -190,6 +213,8 @@ class SpotifyBaton {
         if ($save_cache) {
 
             file_put_contents(SPOTIFY_CACHE, json_encode($data), JSON_PRETTY_PRINT);
+
+            $this->log("Token data cached", "I");
 
         }
 
@@ -208,6 +233,8 @@ class SpotifyBaton {
      * @return array
      */
     public function player_history(int $limit = 3, bool $reverse = false): array {
+
+        $this->log("Recently played tracks", "C");
 
         $this->curl_options([
             "url" => "https://api.spotify.com/v1/me/player/recently-played?limit={$limit}",
@@ -245,6 +272,8 @@ class SpotifyBaton {
      */
     public function player_current(): array {
 
+        $this->log("Currently playing track", "C");
+
         $this->curl_options([
             "url" => "https://api.spotify.com/v1/me/player/currently-playing",
             "authorization" => "bearer"
@@ -269,6 +298,8 @@ class SpotifyBaton {
      * @return array
      */
     public function player_upcoming(int $limit = 3, bool $reverse = true): array {
+
+        $this->log("User's queue", "C");
 
         $this->curl_options([
             "url" => "https://api.spotify.com/v1/me/player/queue",
@@ -314,6 +345,8 @@ class SpotifyBaton {
 
         if (empty($uri)) return false;
 
+        $this->log("Add track to queue", "C");
+
         $this->curl_options([
             "url" => "https://api.spotify.com/v1/me/player/queue?uri=" . urlencode($uri),
             "authorization" => "bearer",
@@ -336,6 +369,8 @@ class SpotifyBaton {
      * @return bool
      */
     public function player_play(): bool {
+
+        $this->log("Start playback", "C");
 
         $this->curl_options([
             "url" => "https://api.spotify.com/v1/me/player/play",
@@ -360,6 +395,8 @@ class SpotifyBaton {
      */
     public function player_pause(): bool {
 
+        $this->log("Pause playback", "C");
+
         $this->curl_options([
             "url" => "https://api.spotify.com/v1/me/player/pause",
             "authorization" => "bearer",
@@ -383,6 +420,8 @@ class SpotifyBaton {
      */
     public function player_next(): bool {
 
+        $this->log("Next track", "C");
+
         $this->curl_options([
             "url" => "https://api.spotify.com/v1/me/player/next",
             "authorization" => "bearer",
@@ -405,6 +444,8 @@ class SpotifyBaton {
      * @return bool
      */
     public function player_previous(): bool {
+
+        $this->log("Previous track", "C");
 
         $this->curl_options([
             "url" => "https://api.spotify.com/v1/me/player/previous",
@@ -431,6 +472,8 @@ class SpotifyBaton {
      * @return array
      */
     public function search(string $query, int $limit = 3, string $type = "track"): array {
+
+        $this->log("Search items", "C");
 
         $this->curl_options([
             "url" => "https://api.spotify.com/v1/search?limit={$limit}&type={$type}&q=" . urlencode($query),
@@ -463,6 +506,8 @@ class SpotifyBaton {
      * @return array
      */
     public function track(string $id): array {
+
+        $this->log("Track info", "C");
 
         if (preg_match("/^spotify:(.+?):(.+)$/", $id, $uri)) {
 
@@ -685,15 +730,49 @@ class SpotifyBaton {
     /**
      * Log some stuff while debugging.
      *
+     * Levels:
+     * - I Info     General verbose output
+     * - C Calls    API calls
+     * - N Notice   Something worth notice, minor problem or possible error
+     * - W Warning  Stuff about to hit the fan!
+     * - F Fatal    Oh we dead x(
+     *
      * @param string|array $stuff
+     * @param string $level
+     * @param bool $time
+     * @param bool $type
      *
      * @return bool
      */
-    public function debug(string|array $stuff): bool {
+    public function log(string|array $stuff, string $level = "N", bool $time = true, bool $type = true): bool {
 
-        if (is_array($stuff)) $stuff = print_r($stuff, true);
+        preg_match_all("/[ICNWF]/", SPOTIFYBATON_LOG_LEVEL, $levels);
 
-        return boolval(file_put_contents(SPOTIFYBATON_LOG, $stuff . PHP_EOL, FILE_APPEND | LOCK_EX));
+        if (!in_array($level, $levels[0])) {
+
+            return false;
+
+        }
+
+        $contents = [];
+
+        if ($time) {
+
+            $contents[] = date(SPOTIFYBATON_LOG_DT, time());
+
+        }
+
+        if ($type) {
+
+            $contents[] = "[{$level}]";
+
+        }
+
+        $contents[] = get_class($this) . ":";
+
+        $contents[] = is_array($stuff) ? print_r($stuff, true) : $stuff;
+
+        return boolval(file_put_contents(SPOTIFYBATON_LOG, implode(" ", $contents) . PHP_EOL, FILE_APPEND | LOCK_EX));
 
     }
 
