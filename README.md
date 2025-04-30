@@ -75,3 +75,21 @@ Get Spotify catalog information for a single track identified by its unique Spot
 |-----------|---------|---------|
 | id        | string  |         |
 > Spotify URI can be also given as parameter, from which ID is extracted.
+
+
+## Setup
+
+1. Go to https://developer.spotify.com/dashboard
+2. [Create app](https://developer.spotify.com/dashboard/create)
+3. Fill in your app details, add a Redirect URI to the app
+	- For example in Lando, that'd be http://spotifybaton.lndo.site/
+4. Enable Web API
+5. Agree to TOS and Design Guidelines
+6. Save
+7. Grab your Cliend ID and Client Secret, make a copy of
+	[defines.php.sample](defines.php.sample) as [defines.php](defines.php)
+	and plop them in
+8. Access [index.php](index.php) through web/development server
+	- Again for example, http://spotifybaton.lndo.site/
+9. Approve the app
+10. Dinkididing!
