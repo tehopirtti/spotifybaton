@@ -87,9 +87,9 @@ Get Spotify catalog information for a single track identified by its unique Spot
 5. Agree to TOS and Design Guidelines
 6. Save
 7. Grab your Cliend ID and Client Secret, make a copy of
-	[defines.php.sample](defines.php.sample) as [defines.php](defines.php)
+	[`defines.php.sample`](defines.php.sample) as [`defines.php`](defines.php)
 	and plop them in
-8. Access [index.php](index.php) through web/development server
+8. Access [`index.php`](index.php) through web/development server
 	- Again for example, http://spotifybaton.lndo.site/
 9. Approve the app
 10. Dinkididing!
