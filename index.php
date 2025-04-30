@@ -1,6 +1,7 @@
 <?php
 
-require_once "../defines.php";
+if (is_readable("defines.php")) require_once "defines.php";
+elseif (is_readable("defines.php")) require_once "../defines.php";
 require_once "inc/class/spotifybaton.php";
 
 $sb = new SpotifyBaton();
@@ -10,7 +11,7 @@ $sb = new SpotifyBaton();
 <html>
     <head>
         <title>SpotifyBaton</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <link rel="stylesheet" href="inc/style.css?<?=filemtime("inc/style.css");?>">
         <script src="inc/functions.js?<?=filemtime("inc/functions.js");?>"></script>
     </head>
