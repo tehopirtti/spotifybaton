@@ -1,0 +1,11 @@
+---
+name: spotifybaton
+recipe: lamp
+config:
+  php: 8.4
+  webroot: .
+
+services:
+  database: disabled
+  appserver:
+    scanner: false
