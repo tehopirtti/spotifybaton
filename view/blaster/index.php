@@ -4,8 +4,8 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>SpotifyBaton: Blaster</title>
-		<script defer src="view/blaster/functions.js"></script>
-		<link rel="stylesheet" href="view/blaster/style.css">
+		<script defer src="view/blaster/functions.js?<?= filemtime(__DIR__ . "/functions.js") ?>"></script>
+		<link rel="stylesheet" href="view/blaster/style.css?<?= filemtime(__DIR__ . "/style.css") ?>">
 	</head>
 	<body>
 		<main>
