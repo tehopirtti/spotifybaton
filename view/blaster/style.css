@@ -1,0 +1,99 @@
+@font-face {
+	font-family: "Source Sans 3";
+	font-weight: 200 900;
+	font-style: normal;
+	font-stretch: normal;
+	src: url("fonts/Source Sans 3.woff2") format("woff2-variations");
+}
+
+@font-face {
+	font-family: "Source Sans 3";
+	font-weight: 200 900;
+	font-style: italic;
+	font-stretch: normal;
+	src: url("fonts/Source Sans 3 Italic.woff2") format("woff2-variations");
+}
+
+:root {
+	color-scheme: dark light;
+	--color-spotify: #1ED760;
+	--accent-color: #fff;
+	font-size: 16px;
+	font-family: "Source Sans 3", sans-serif;
+	accent-color: var(--accent-color);
+	background: #000;
+	color: #ddd;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	body {
+		margin: 0;
+		padding: 0;
+		min-height: 100%;
+		align-content: center;
+		main {
+			container-type: inline-size;
+			display: grid;
+			grid-template-columns: 1fr 3fr 1fr;
+			section {
+				font-size: 0;
+				white-space: nowrap;
+				.cover {
+					display: inline-block;
+					box-shadow: 0 0 32px 16px #000;
+					position: relative;
+					border-radius: .5cqw;
+					max-width: 12.5cqw;
+					background: #000;
+				}
+				img, svg {
+					max-width: 100%;
+					aspect-ratio: 1;
+				}
+				&#history {
+					.cover {
+						margin-right: -7.5cqw;
+						transform: perspective(50px) rotate3d(0, 1, 0, 5deg);
+						&:nth-child(1) {
+							scale: .5;
+							> img {
+								opacity: .25;
+							}
+						}
+						&:nth-child(2) {
+							scale: .667;
+							> img {
+								opacity: .5;
+							}
+						}
+						&:nth-child(3) {
+							scale: .75;
+							> img {
+								opacity: .75;
+							}
+						}
+					}
+				}
+				&#current {
+					margin-left: -5cqw;
+					display: flex;
+					ul {
+						align-content: center;
+						font-size: 1.5cqw;
+						list-style: none;
+						.title {
+							color: var(--accent-color);
+							font-size: 2em;
+						}
+						.artist {
+							font-size: 1.5em;
+						}
+					}
+				}
+				&#upcoming {
+					display: none;
+				}
+			}
+		}
+	}
+}

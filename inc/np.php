@@ -1,6 +1,7 @@
 <?php
 
-require_once "../../defines.php";
+if (is_readable("../defines.php")) require_once "../defines.php";
+elseif (is_readable("../../defines.php")) require_once "../../defines.php";
 require_once "../inc/class/spotifybaton.php";
 
 $sb = new SpotifyBaton();
