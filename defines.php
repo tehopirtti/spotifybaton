@@ -16,7 +16,8 @@ foreach ([
     "SPOTIFYBATON_LOG_DT" => "H.m.s", // Log date and/or time format.
     "SPOTIFYBATON_VOTESKIP_LIMIT" => 5, // Set vote skip limit (from 1 to 10).
     "SPOTIFYBATON_VOTESKIP_EXPIRES" => 90000, // Set vote skip expiration time in milliseconds (0 to disable).
-    "SPOTIFYBATON_QUEUE_MAX_DURATION" => 522000 // Limit the maximum duration of queued track in milliseconds (0 to disable).
+    "SPOTIFYBATON_QUEUE_MAX_DURATION" => 522000, // Limit the maximum duration of queued track in milliseconds (0 to disable).
+    "SPOTIFYBATON_API_TOKEN" => "" // Token for REST API calls
 ] as $key => $value) {
 
     define($key, $value);
